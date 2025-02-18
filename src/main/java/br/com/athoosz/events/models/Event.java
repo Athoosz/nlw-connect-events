@@ -3,6 +3,7 @@ package br.com.athoosz.events.models;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "tbl_event")
@@ -32,10 +33,10 @@ public class Event {
     private LocalDate endDate;
 
     @Column(name = "start_time")
-    private LocalDate startTime;
+    private LocalTime startTime;
 
     @Column(name = "end_time")
-    private LocalDate endTime;
+    private LocalTime endTime;
 
     public Integer getEventId() {
         return eventId;
@@ -93,19 +94,19 @@ public class Event {
         this.endDate = endDate;
     }
 
-    public LocalDate getStartTime() {
+    public LocalTime getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(LocalDate startTime) {
+    public void setStartTime(LocalTime startTime) {
         this.startTime = startTime;
     }
 
-    public LocalDate getEndTime() {
+    public LocalTime getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(LocalDate endTime) {
+    public void setEndTime(LocalTime endTime) {
         this.endTime = endTime;
     }
 }
