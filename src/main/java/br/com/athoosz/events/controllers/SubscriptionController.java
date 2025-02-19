@@ -1,7 +1,10 @@
 package br.com.athoosz.events.controllers;
 
 import br.com.athoosz.events.dto.ErrorMessage;
+import br.com.athoosz.events.dto.SubscriptionResponse;
 import br.com.athoosz.events.exceptions.EventNotFoundException;
+import br.com.athoosz.events.exceptions.SubscriptionConflictException;
+import br.com.athoosz.events.exceptions.UserIndicatorNotFoundException;
 import br.com.athoosz.events.models.Subscription;
 import br.com.athoosz.events.models.User;
 import br.com.athoosz.events.services.SubscriptionService;
@@ -18,14 +21,22 @@ public class SubscriptionController {
     @Autowired
     private SubscriptionService subscriptionService;
 
-    @PostMapping("/subscription/{prettyName}")
-    public ResponseEntity<?> createSubscription(@PathVariable String prettyName, @RequestBody User subscriber) {
+    @PostMapping({"/subscription/{prettyName}", "subscription/{prettyName}/{userId"})
+    public ResponseEntity<?> createSubscription(@PathVariable String prettyName,
+                                                @RequestBody User subscriber,
+                                                @PathVariable(required = false)Integer userId) {
         try {
-            Subscription result = subscriptionService.createNewSubscription(prettyName, subscriber);
+            SubscriptionResponse result = subscriptionService.createNewSubscription(prettyName, subscriber,userId);
             if (result != null) {
                 return ResponseEntity.ok(result);
             }
         } catch (EventNotFoundException ex) {
+            return ResponseEntity.status(404).body(new ErrorMessage(ex.getMessage()));
+        }
+        catch (SubscriptionConflictException ex){
+            return ResponseEntity.status(409).body(new ErrorMessage(ex.getMessage()));
+        }
+        catch (UserIndicatorNotFoundException ex){
             return ResponseEntity.status(404).body(new ErrorMessage(ex.getMessage()));
         }
      return ResponseEntity.badRequest().build();
