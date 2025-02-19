@@ -5,7 +5,6 @@ import br.com.athoosz.events.dto.SubscriptionResponse;
 import br.com.athoosz.events.exceptions.EventNotFoundException;
 import br.com.athoosz.events.exceptions.SubscriptionConflictException;
 import br.com.athoosz.events.exceptions.UserIndicatorNotFoundException;
-import br.com.athoosz.events.models.Subscription;
 import br.com.athoosz.events.models.User;
 import br.com.athoosz.events.services.SubscriptionService;
 import org.springframework.beans.factory.annotation.Autowired;
