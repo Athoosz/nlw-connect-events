@@ -1,5 +1,6 @@
 package br.com.athoosz.events.services;
 
+import br.com.athoosz.events.dto.SubscriptionRankingItem;
 import br.com.athoosz.events.dto.SubscriptionResponse;
 import br.com.athoosz.events.exceptions.EventNotFoundException;
 import br.com.athoosz.events.exceptions.SubscriptionConflictException;
@@ -10,6 +11,9 @@ import br.com.athoosz.events.models.User;
 import br.com.athoosz.events.repositories.EventRepository;
 import br.com.athoosz.events.repositories.SubscriptionRepository;
 import br.com.athoosz.events.repositories.UserRepository;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +29,7 @@ public class SubscriptionService {
     @Autowired
     private EventRepository eventRepository;
 
-    public SubscriptionResponse createNewSubscription(String eventName, User user,Integer userId) {
+    public SubscriptionResponse createNewSubscription(String eventName, User user, Integer userId) {
 
         // recuperar o evento pelo nome
         Event event = eventRepository.findByPrettyName(eventName);
@@ -36,10 +40,12 @@ public class SubscriptionService {
         if (userRecovered == null) { // Usuario existe na base, porem nao há inscricao dele
             userRecovered = userRepository.save(user);
         }
-
-        User indicator = userRepository.findById(userId).orElse(null);
-        if(indicator == null) {
-            throw new UserIndicatorNotFoundException("Usuario " + userId + " indicador nao existe ");
+        User indicator = null;
+        if (userId != null) {
+            indicator = userRepository.findById(userId).orElse(null);
+            if (indicator == null) {
+                throw new UserIndicatorNotFoundException("Usuario " + userId + " indicador nao existe ");
+            }
         }
 
         Subscription subscription = new Subscription();
@@ -49,11 +55,21 @@ public class SubscriptionService {
 
         Subscription tmpSub = subscriptionRepository.findByEventAndSubscriber(event, userRecovered);
         if (tmpSub != null) { // ja existe inscricao do usuario no evento
-            throw new SubscriptionConflictException("Ja existe inscriçao para o usuario " + userRecovered.getName() + " no evento " + event.getTitle());
+            throw new SubscriptionConflictException(
+                    "Ja existe inscriçao para o usuario " + userRecovered.getName() + " no evento " + event.getTitle());
         }
 
         Subscription result = subscriptionRepository.save(subscription);
         return new SubscriptionResponse(result.getSubscriptionNumber(),
-                "http://codecraft.com/subscription/" + result.getEvent().getPrettyName() + "/" + result.getSubscriber().getUserId());
+                "http://codecraft.com/subscription/" + result.getEvent().getPrettyName() + "/"
+                        + result.getSubscriber().getUserId());
+    }
+
+    public List<SubscriptionRankingItem> getCompleteRanking(String prettyName) {
+        Event event = eventRepository.findByPrettyName(prettyName);
+        if (event == null) {
+            throw new EventNotFoundException("Ranking do evento " + prettyName + " nao encontrado");
+        }
+        return subscriptionRepository.generateRanking(event.getEventId());
     }
 }
