@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
 
 @RestController
 public class SubscriptionController {
@@ -25,7 +23,7 @@ public class SubscriptionController {
 
     @PostMapping({ "/subscription/{prettyName}", "subscription/{prettyName}/{userId}" })
     public ResponseEntity<?> createSubscription(@PathVariable String prettyName,
-                                                @RequestBody User subscriber,
+            @RequestBody User subscriber,
             @PathVariable(required = false) Integer userId) {
         try {
             SubscriptionResponse result = subscriptionService.createNewSubscription(prettyName, subscriber, userId);
@@ -41,7 +39,7 @@ public class SubscriptionController {
         }
         return ResponseEntity.badRequest().build();
     }
-    
+
     @GetMapping("/subscription/{prettyName}/ranking")
     public ResponseEntity<?> getRankingByEvent(@PathVariable String prettyName) {
         try {
@@ -50,5 +48,13 @@ public class SubscriptionController {
             return ResponseEntity.status(404).body(new ErrorMessage(ex.getMessage()));
         }
     }
-}
 
+    @GetMapping("/subscription/{prettyName}/ranking/{userId}")
+    public ResponseEntity<?> getRankingByEventAndUser(@PathVariable String prettyName, @PathVariable Integer userId) {
+        try {
+            return ResponseEntity.ok(subscriptionService.getRankingByUser(prettyName, userId));
+        } catch (Exception ex) {
+            return ResponseEntity.status(404).body(new ErrorMessage(ex.getMessage()));
+        }
+    }
+}

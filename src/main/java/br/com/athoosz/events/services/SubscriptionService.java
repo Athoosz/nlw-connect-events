@@ -1,5 +1,6 @@
 package br.com.athoosz.events.services;
 
+import br.com.athoosz.events.dto.SubscriptionRankingByUser;
 import br.com.athoosz.events.dto.SubscriptionRankingItem;
 import br.com.athoosz.events.dto.SubscriptionResponse;
 import br.com.athoosz.events.exceptions.EventNotFoundException;
@@ -13,6 +14,7 @@ import br.com.athoosz.events.repositories.SubscriptionRepository;
 import br.com.athoosz.events.repositories.UserRepository;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -71,5 +73,17 @@ public class SubscriptionService {
             throw new EventNotFoundException("Ranking do evento " + prettyName + " nao encontrado");
         }
         return subscriptionRepository.generateRanking(event.getEventId());
+    }
+
+    public SubscriptionRankingByUser getRankingByUser(String prettyName, Integer userId) {
+        List<SubscriptionRankingItem> ranking = getCompleteRanking(prettyName);
+        SubscriptionRankingItem item = ranking.stream().filter(i -> i.userId().equals(userId)).findFirst().orElse(null);
+        if (item == null) {
+            throw new UserIndicatorNotFoundException(
+                    "Nao ha inscricao para o usuario " + userId + " no evento " + prettyName);
+        }
+        Integer position = IntStream.range(0, ranking.size()).filter(i -> ranking.get(i).userId().equals(userId))
+                .findFirst().getAsInt();
+        return new SubscriptionRankingByUser(item, position + 1);
     }
 }
