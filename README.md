@@ -4,13 +4,12 @@ Este projeto foi desenvolvido como parte das aulas da NLW Connect 🚀. O projet
 
 ## Descrição 📜
 
-Trata-se de uma solução completa para a recomendação e inscrição em eventos 🎉. O sistema permite que os usuários acessem seus ingressos 🎟️, gerem links personalizados de convite 🔗 e acompanhem seu desempenho através do ranking de indicações 🏆.
+Trata-se de uma solução para a recomendação e inscrição em eventos 🎉. O sistema permite que os usuários acessem seus ingressos 🎟️, faça indicações para o evento,e acompanhem seu desempenho através do ranking de indicações 🏆.
 
 ## Funcionalidades ⚙️
 
 - **Cadastro de Eventos**: Permite a criação de novos eventos com informações detalhadas como título, localização, preço, datas e horários 📅.
 - **Inscrição em Eventos**: Usuários podem se inscrever em eventos e indicar outros usuários 🙋‍♂️🙋‍♀️.
-- **Geração de Links de Convite**: Usuários podem gerar links de convite para compartilhar com amigos 🤝.
 - **Ranking de Indicações**: Acesso ao ranking de usuários que mais indicaram outros participantes 📈.
 
 ## Tecnologias Utilizadas 🛠️
